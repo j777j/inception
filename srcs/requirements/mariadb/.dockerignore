@@ -1,0 +1,9 @@
+# Ignore .dockerignore file itself
+.dockerignore
+
+# Ignore Git related files
+.git
+.gitignore
+
+# Ignore Markdown files (e.g. README)
+*.md
