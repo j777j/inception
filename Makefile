@@ -4,8 +4,7 @@ extract-wordpress:
         mkdir -p /home/juwang/data/wordpress /home/juwang/data/mariadb
         sudo tar -xzf srcs/requirements/wordpress/files/latest.tar.gz -C /home/juwang/data/wordpress --strip-components=1
         sudo chown -R www-data:www-data /home/juwang/data/wordpress
-
-        sudo chown -R mysql:mysql /home/juwang/data/mariadb
+        sudo chown -R juwang:juwang /home/juwang/data/mariadb
         sudo chmod -R 777 /home/juwang/data/mariadb
 
 all: extract-wordpress
