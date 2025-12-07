@@ -1,6 +1,11 @@
-.PHONY: all up down clean re
+.PHONY: all up down clean re extract-wordpress
 
-all:
+extract-wordpress:
+	mkdir -p /home/juwang/data/wordpress
+	sudo tar -xzf srcs/requirements/wordpress/files/latest.tar.gz -C /home/juwang/data/wordpress --strip-components=1
+	sudo chown -R www-data:www-data /home/juwang/data/wordpress
+
+all: extract-wordpress
 	docker compose -f srcs/docker-compose.yml up --build -d
 
 up:
