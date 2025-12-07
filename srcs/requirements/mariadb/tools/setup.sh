@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chown -R mysql:mysql /var/lib/mysql
+
 # 1. Start MariaDB daemon for initialization (in background)
 mysqld_safe --nowatch --skip-networking &
 
