@@ -3,7 +3,7 @@ FROM debian:bullseye
 
 # ...existing code...
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y php7.4 php-fpm php-mysql curl && \
+    apt-get install -y php7.4 php-fpm php-mysql curl default-mysql-client && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
