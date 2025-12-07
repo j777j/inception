@@ -2,9 +2,8 @@
 FROM debian:bullseye
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y mariadb-server && \
+    apt-get install -y mariadb-client mariadb-common mariadb-server && \
     rm -rf /var/lib/apt/lists/*
-
 
 COPY ./conf/my.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
@@ -15,4 +14,3 @@ RUN chmod +x /usr/local/bin/setup.sh
 EXPOSE 3306
 
 ENTRYPOINT ["/usr/local/bin/setup.sh"]
-
