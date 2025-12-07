@@ -11,7 +11,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     mv wp-cli.phar /usr/local/bin/wp
 
 WORKDIR /var/www/html
-COPY wordpress_src/ /var/www/html/
+COPY files/latest.tar.gz /var/www/html/
+RUN tar -xzf latest.tar.gz --strip-components=1 && rm latest.tar.gz
 RUN chown -R www-data:www-data /var/www/html
 
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
