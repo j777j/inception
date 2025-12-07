@@ -6,7 +6,7 @@ mysqld_safe --nowatch --skip-networking &
 # 2. Wait for MariaDB to be ready
 echo "Waiting for MariaDB to start for initialization..."
 while ! mysqladmin ping -hlocalhost --silent; do
-    sleep 1
+    sleep 5
 done
 echo "MariaDB is ready for initialization."
 
