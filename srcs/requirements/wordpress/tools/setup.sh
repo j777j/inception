@@ -5,10 +5,8 @@ while ! mysqladmin ping -h mariadb -u $DB_USER -p$DB_PASS --silent; do
     sleep 1
 done
 
-# Download and configure WordPress if it's not already installed
+# Configure and install WordPress if it's not already installed
 if ! $(wp core is-installed); then
-    wp core download --allow-root
-
     wp config create --dbname=$DB_NAME \
                      --dbuser=$DB_USER \
                      --dbpass=$DB_PASS \
