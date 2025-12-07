@@ -3,7 +3,7 @@ FROM debian:bookworm
 
 # ...existing code...
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y php7.4 php-fpm php-mysql curl default-mysql-client && \
+    apt-get install -y php8.2 php-fpm php-mysql curl default-mysql-client && \
     rm -rf /var/lib/apt/lists/*
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
@@ -13,7 +13,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 WORKDIR /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 COPY ./tools/setup.sh /usr/local/bin/setup.sh
 RUN chmod +x /usr/local/bin/setup.sh
 

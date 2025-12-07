@@ -24,4 +24,4 @@ if ! $(wp core is-installed); then
 fi
 
 # Start PHP-FPM
-exec /usr/sbin/php-fpm7.4 -F
+exec /usr/sbin/php-fpm8.2 -F
