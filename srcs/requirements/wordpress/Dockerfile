@@ -1,5 +1,5 @@
 # srcs/requirements/wordpress/Dockerfile
-FROM debian:bullseye
+FROM debian:bookworm
 
 # ...existing code...
 RUN apt-get update && apt-get upgrade -y && \
