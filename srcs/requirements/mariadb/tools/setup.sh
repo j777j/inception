@@ -5,7 +5,7 @@ mysqld_safe --nowatch --skip-networking &
 
 # 2. Wait for MariaDB to be ready (Use 127.0.0.1 for reliability)
 echo "Waiting for MariaDB to start..."
-while ! mysqladmin ping -h 127.0.0.1 -u root --silent; do
+while ! mysqladmin ping -h 127.0.0.1  --silent; do
     sleep 3
 done
 echo "MariaDB is ready."
