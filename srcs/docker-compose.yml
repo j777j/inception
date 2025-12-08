@@ -35,7 +35,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - /home/juwang/data/wordpress:/var/www/html
+      - wordpress:/var/www/html
     networks:
       - inception
     depends_on:

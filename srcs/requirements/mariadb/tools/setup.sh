@@ -1,52 +1,59 @@
-  GNU nano 8.4                                                                 setup.sh
 #!/bin/bash
 
-# 设置：如果任何命令失败，脚本立即退出
 set -e
 
-# 检查数据库是否已初始化
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "MariaDB: Starting initial setup..."
 
-    # 1. 初始化 MariaDB 数据目录
+    chown -R mysql:mysql /var/lib/mysql
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --rpm
 
-    # 2. 启动一个临时实例进行 SQL 配置（在后台启动）
     mysqld_safe --nowatch --skip-networking &
+    MYSQLD_PID=$!
 
-    # 3. 等待临时实例启动
-    # echo "等待临时数据库启动..."
-    while ! mysqladmin ping -h localhost --silent; do
-        sleep 3
+    # Wait for MySQL to be ready
+    MAX_RETRIES=30
+    RETRY_COUNT=0
+    while ! mysqladmin ping -h localhost --silent 2>/dev/null; do
+        RETRY_COUNT=$((RETRY_COUNT + 1))
+        if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
+            echo "ERROR: MariaDB failed to start within timeout"
+            kill $MYSQLD_PID 2>/dev/null || true
+            exit 1
+        fi
+        sleep 1
     done
 
-    # 4. 执行 SQL 配置（创建数据库、用户、设置 root 密码）
-    # echo "MariaDB: 配置数据库和用户..."
+    echo "MariaDB: Database is ready, running initialization..."
 
-    # 修正点：创建 init.sql 文件，然后导入，这是最可靠的执行 SQL 方式;关键修正：添加用户从 localhost 连接的权限
     cat << EOF > /tmp/init.sql
-CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER IF NOT EXISTS \`${DB_USER}\`@'%' IDENTIFIED BY '${DB_PASS}';
+CREATE USER IF NOT EXISTS \`${DB_USER}\`@'wordpress.srcs_inception' IDENTIFIED BY '${DB_PASS}';
 GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO \`${DB_USER}\`@'%';
-CREATE USER IF NOT EXISTS \`${DB_USER}\`@'localhost' IDENTIFIED BY '${DB_PASS}';
-GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO \`${DB_USER}\`@'localhost';
+GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO \`${DB_USER}\`@'wordpress.srcs_inception';
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASS}';
 FLUSH PRIVILEGES;
 EOF
 
-    # 导入 SQL 文件（使用 root 和 localhost 连接）
-    mysql -u root -h localhost --skip-password < /tmp/init.sql
+    # Execute the SQL script
+    if ! mysql -u root -h localhost --skip-password < /tmp/init.sql; then
+        echo "ERROR: Failed to execute initialization SQL"
+        rm -f /tmp/init.sql
+        kill $MYSQLD_PID 2>/dev/null || true
+        exit 1
+    fi
 
-    # 删除临时文件
     rm -f /tmp/init.sql
 
-    # 5. 关闭临时实例
-    # echo "关闭临时数据库..."
+    echo "MariaDB: Initialization complete, shutting down temporary instance..."
     mysqladmin -u root -p$DB_ROOT_PASS -h localhost shutdown
 
-    # echo "MariaDB: 初始化完成。"
+    # Wait for the temporary instance to shut down
+    wait $MYSQLD_PID 2>/dev/null || true
+
+    echo "MariaDB: Temporary instance shut down successfully"
 fi
 
-# 6. 使用 exec 启动 MariaDB 主进程（成为 PID 1）
 echo "MariaDB: Starting main service..."
 exec /usr/sbin/mysqld --bind-address=0.0.0.0 --user=mysql
