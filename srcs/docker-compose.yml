@@ -8,7 +8,7 @@ services:
     image: mariadb
     env_file: .env
     volumes:
-      - /home/juwang/data/mariadb:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     networks:
       - inception
     restart: unless-stopped
@@ -20,7 +20,7 @@ services:
     image: wordpress
     env_file: .env
     volumes:
-      - /home/juwang/data/wordpress:/var/www/html
+      - wordpress:/var/www/html
     networks:
       - inception
     depends_on:
@@ -59,7 +59,7 @@ networks:
   inception:
     driver: bridge
 
-#extra
+#for name volume instead of bind mount
 volumes:
   mariadb:
     driver: local
@@ -67,3 +67,9 @@ volumes:
       type: none
       o: bind
       device: /home/juwang/data/mariadb
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/juwang/data/wordpress

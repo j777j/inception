@@ -1,4 +1,5 @@
-.PHONY: all up down clean re extract-wordpress
+all: extract-wordpress
+        docker compose -f srcs/docker-compose.yml up --build -d
 
 extract-wordpress:
         mkdir -p /home/juwang/data/wordpress /home/juwang/data/mariadb
@@ -6,9 +7,6 @@ extract-wordpress:
         sudo chown -R www-data:www-data /home/juwang/data/wordpress
         sudo chown -R juwang:juwang /home/juwang/data/mariadb
         sudo chmod -R 777 /home/juwang/data/mariadb
-
-all: extract-wordpress
-        docker compose -f srcs/docker-compose.yml up --build -d
 
 up:
         docker compose -f srcs/docker-compose.yml up -d
@@ -20,3 +18,5 @@ clean:
         docker compose -f srcs/docker-compose.yml down -v --rmi all
 
 re: clean all
+
+.PHONY: all up down clean re extract-wordpress
