@@ -42,7 +42,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY '${DB_ROOT_PASS}';
 FLUSH PRIVILEGES;
 EOF
 
-    mysql -u root -h localhost --skip-password < /tmp/init.sql || exit 1
+    mysql -u root < /tmp/init.sql || exit 1
 
     rm -f /tmp/init.sql
 
